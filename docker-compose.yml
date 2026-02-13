@@ -1,0 +1,40 @@
+services:
+  mysql:
+    build:
+       dockerfile: database/Dockerfile
+    container_name: database
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - examenInternal
+  backend:
+    build:
+      dockerfile: backend/Dockerfile
+    container_name: backend
+    ports:
+      - '8080:80'
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_NAME=demo_app
+      - DB_USER=root
+      - DB_PASS=root
+  frontend:
+    build:
+      dockerfile: frontend/Dockerfile
+    container_name: frontend
+    ports:
+      - '8000:80'
+    depends_on:
+      - backend
+networks:
+  examenInternal:
+  
+
+volumes:
+  mysql_data:
